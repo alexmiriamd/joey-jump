@@ -22,7 +22,7 @@
 
         <!-- Game Container -->
          <div class="game-container">
-            <div class="score-counter">
+            <div id="score-counter">
                 Score: 0
             </div>
             <div class="joey"> </div>
@@ -31,14 +31,10 @@
         </div>
 
             <!-- Game Over Screen-->
-            <div id="game-over-screen" class="screen-hidden">
-                <h2>
-                    Oops! You Died
-                </h2>
-                <button id="restart-btn">
-                    Try Again?
-                </button>
-            </div>
+        <div id="gameOverScreen" class="hidden">
+            <h2>Oops! Joey bonked it.</h2>
+            <button id="playAgain">Try Again</button>
+         </div>
 
          <script src="script.js"></script>
     </body>

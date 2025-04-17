@@ -9,7 +9,7 @@
     font-family: 'Arial', sans-serif;
     background-color: #272760; /* Deep space vibes */
     color: #5E66D5;
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   
   /* Game Container */
@@ -17,7 +17,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
-    overflow: hidden;
+    /* overflow: hidden; */
     /* Background- space, slow scroll using animation or JS parallax */
   }
   
@@ -32,35 +32,33 @@
     left: 50px;
   }
 
-.jump{
-  transition: transform 1s ease-out;
+/* .jump{
+  transition: transform 1s cubic-bezier(0,.63,.57,.98);
   transform: translateY(0);
 }
 .jump {
   transform: translateY(-200px);
+} */
+
+@keyframes jump {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  30% {
+    transform: translateY(-200px) scale(1.1, 0.9); /* slight stretch mid-air */
+  }
+  70% {
+    transform: translateY(0) scale(1.2, 0.7); /* squish on landing */
+  }
+  100% {
+    transform: translateY(0) scale(1, 1); /* back to normal */
+  }
 }
 
-  /* .jump {
-    animation: jump 1s ease-out;
-  } */
-  
-  /* @keyframes jump {
-    0% {
-        bottom: 50px;
-    }
-    20% {
-      bottom: 200px;
-    }
-    60% {
-      bottom: 200px;
-    }
-    80% {
-        bottom: 100px;
-    }
-    100% {
-        bottom: 50px;
-    }
-  } */
+.jump {
+  animation: jump 1.5s cubic-bezier(0.25, 0.5, 0.3, 1);
+}
+
   
   /* Obstacle */
   .obstacle {
@@ -119,10 +117,23 @@
     filter: blur(4px);  /* Blur effect- spacey magic */
   }
 
-  .screen.hidden {
+  .hidden {
     display: none;
   }
   
+  #gameOverScreen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    z-index: 9999;
+  }
+
   .start-title {
     font-size: 3rem;
     animation: bounce 1.2s infinite ease-in-out;
