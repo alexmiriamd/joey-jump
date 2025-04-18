@@ -6,6 +6,8 @@ let score = 0;
 let intervalId;
 
 const obstacle = document.querySelector(".obstacle");
+const spaceship = document.querySelector(".spaceship");
+const spaceJunk = document.querySelector(".spaceJunk");
 const joey = document.querySelector(".joey");
 
 const startScreen = document.getElementById("start-screen");
@@ -29,6 +31,9 @@ function startGame(e) {
     score = 0;
     startTime = Date.now();
     intervalId = setInterval(updateScore, 2000);
+
+    launchSpaceship();
+    launchJunk();
     gameLoop();
    }
 
@@ -50,7 +55,11 @@ document.addEventListener("keydown", (e) => {
 let obstacleX = window.innerWidth; //starting off screen
 
 function moveObstacle() {
-    obstacleX -= 5; //moving left 5px every frame
+    let baseSpeed = 5;
+    let speedIncrease = Math.floor(score / 10); // +1 every 10 seconds
+    let currentSpeed = Math.min(baseSpeed + speedIncrease, 15); // cap at 15
+
+    obstacleX -= currentSpeed; //speeds up as score increases.
     obstacle.style.left = obstacleX + "px";
 
     if (obstacleX < -40) {
@@ -58,6 +67,72 @@ function moveObstacle() {
     }
     console.log("Obstacle moved!");
 }
+
+function launchSpaceship() {
+    const spaceship = document.querySelector('.spaceship');
+    spaceship.classList.remove('hidden');
+  
+    const randomTop = Math.floor(Math.random() * 150) + 50; // 50–200px
+    spaceship.style.top = `${randomTop}px`;
+  
+    let spaceshipX = window.innerWidth + 100;
+  
+    function moveSpaceship() {
+      if (!running) return;
+  
+      spaceshipX -= 2.5; // make this smaller for slower movement
+      spaceship.style.left = `${spaceshipX}px`;
+  
+      if (spaceshipX < -100) {
+        spaceship.classList.add('hidden');
+  
+        // Wait and restart with random delay + new height
+        setTimeout(() => {
+          if (running) launchSpaceship();
+        }, Math.random() * 5000 + 3000); // 3–8 second delay
+      } else {
+        requestAnimationFrame(moveSpaceship);
+      }
+    }
+  
+    spaceship.style.left = `${spaceshipX}px`; // set starting left position
+    console.log("Spaceship X:", spaceshipX);
+
+    moveSpaceship();
+  }
+  
+function launchJunk() {
+    const spaceJunk = document.querySelector('.spaceJunk');
+    spaceJunk.classList.remove('hidden');
+
+    const randomTop = Math.floor(Math.random() * 150) + 150; // 150–250px from the top
+    spaceJunk.style.top = `${randomTop}px`;
+
+    let spaceJunkX = window.innerWidth + 100;
+
+    function moveSpaceJunk() {
+        if (!running) return;
+
+        spaceJunkX -= 5; // make this smaller for slower movement
+        spaceJunk.style.left = `${spaceJunkX}px`;
+
+        if (spaceJunkX < -100) {
+            spaceJunk.classList.add('hidden');
+
+            // Wait and restart with random delay + new height
+            setTimeout(() => {
+                if (running) launchJunk();
+            }, Math.random() * 5000 + 3000); // 3–8 second delay
+        }
+        else {
+            requestAnimationFrame(moveSpaceJunk);
+        }
+    }
+    spaceJunk.style.left = `${spaceJunkX}px`; // set starting left position
+    moveSpaceJunk();
+}
+
+
 
 //Collision detection
 function checkCollision(joey, obstacle){
@@ -85,14 +160,18 @@ function endGame() {
     running = false; //stop the game loop
     clearInterval(intervalId); //stop the score update
     cancelAnimationFrame(gameLoopId); //stop the game loop
+
+    document.getElementById("finalScore").innerText = `Joey made it ${score} seconds into orbit!`;
     document.getElementById("gameOverScreen").classList.remove("hidden");
-    const gameOverEl = document.getElementById("gameOverScreen");
-gameOverEl.classList.remove("hidden");
-console.log("Game Over!", gameOverEl);
-console.log("Computed style:", window.getComputedStyle(gameOverEl).display);
-
-
 }
+
+//Restart button functionality
+const restartButton = document.getElementById("playAgain");
+restartButton.addEventListener("click", () => {
+    document.getElementById("gameOverScreen").classList.add("hidden");
+    resetGame();
+    startGame();
+});
 
 //reset position functions
 function resetGame() {
@@ -109,7 +188,7 @@ function gameLoop() {
     moveObstacle();
     
 
-    if (checkCollision(joey, obstacle)) {
+    if (checkCollision(joey, obstacle) || checkCollision(joey, spaceship) || checkCollision(joey, spaceJunk)) {
         console.log("💥 COLLISION DETECTED!");
         endGame();
         return;

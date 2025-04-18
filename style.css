@@ -60,7 +60,7 @@
 }
 
   
-  /* Obstacle */
+  /* Obstacle -- meteors */
   .obstacle {
     width: 30px;
     height: 60px;
@@ -69,7 +69,25 @@
     bottom: 50px;
     right: 0;
   }
-  
+/* Obstacle -- spaceship */
+  .spaceship {
+    width: 60px;
+    height: 30px;
+    background-color: #ccc; /* or use a cute sprite later */
+    position: absolute;
+    top: 120px; /* starting mid-air */
+    right: -100px; /* off-screen */
+    }
+/* Obstacle -- space Junk */
+  .spaceJunk {
+    width: 50px;
+    height: 20px;
+    background-color: #ff0; /* Placeholder for UFO */
+    position: absolute;
+    top: 200px; /* starting mid-air */
+    right: -100px; /* off-screen */
+  }
+
   /* Ground */
   .ground {
     width: 100%;
