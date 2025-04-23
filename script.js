@@ -71,21 +71,41 @@ function moveObstacle() {
 function launchSpaceship() {
     const spaceship = document.querySelector('.spaceship');
     spaceship.classList.remove('hidden');
-  
-    const randomTop = Math.floor(Math.random() * 150) + 50; // 50–200px
+    
+   
+    const randomTop = Math.floor(Math.random() * 200) + 150; // 50–200px
     spaceship.style.top = `${randomTop}px`;
   
     let spaceshipX = window.innerWidth + 100;
   
+    // Only shoot while it's active!
+    const shootingDelay = Math.random() * 2000 + 1000; // 1–3 seconds into flight
+    const shootingTimeout = setTimeout(() => {
+        if (running && !spaceship.classList.contains("hidden")) {
+    shootProjectile();}
+    }, shootingDelay);
+
+
+
+
     function moveSpaceship() {
       if (!running) return;
   
       spaceshipX -= 2.5; // make this smaller for slower movement
       spaceship.style.left = `${spaceshipX}px`;
-  
-      if (spaceshipX < -100) {
+        
+        //Wavy movement
+        const frequency = 0.01; // adjust for speed
+        const amplitude = 100; // adjust for height
+        const offset = 150; // adjust for starting height
+        spaceship.style.top = `${Math.sin(spaceshipX * frequency) * amplitude + offset}px`;
+        spaceship.style.transition = "top 0.1s linear"; // smooth transition
+
+      if (spaceshipX < -spaceship.offsetWidth) {
         spaceship.classList.add('hidden');
-  
+        
+        clearTimeout(shootingTimeout); // ❗ stop firing when ship is gone
+
         // Wait and restart with random delay + new height
         setTimeout(() => {
           if (running) launchSpaceship();
@@ -101,11 +121,57 @@ function launchSpaceship() {
     moveSpaceship();
   }
   
+
+//projectile mechanics
+function shootProjectile() {
+    if (spaceship.classList.contains("hidden")) return; //only shoots when spaceship is visible
+    const projectile = document.createElement("div");
+    projectile.classList.add("projectile");
+    document.querySelector(".game-container").appendChild(projectile);
+
+    //starting position: spaceships current X and a bit lower Y (cannon style)
+    const startX = spaceship.offsetLeft;
+    const startY = spaceship.offsetTop + 50; // adjust as needed for spaceship size
+
+    let projX = startX;
+    let projY = startY;
+
+    //target joey's position
+    const joeyFeetY = joey.offsetTop + joey.offsetHeight; // bottom of joey
+
+    //Angle math...
+    const speed = 4; //adjust later for speed-up
+    const angle = Math.atan2(joeyFeetY - projY, 0 - projX); // angle to joey
+
+    function moveProjectile () {
+        if (!running) return;
+        
+        projX += Math.cos(angle) * speed;
+        projY += Math.sin(angle) * speed;
+
+        projectile.style.left = `${projX}px`;
+        projectile.style.top = `${projY}px`;
+
+        if (projX < 0 || projY > window.innerHeight) {
+            projectile.remove(); //remove when off screen
+        } else {
+            requestAnimationFrame(moveProjectile);
+        }
+    }
+    // Initial styling
+  projectile.style.position = "absolute";
+  projectile.style.left = `${projX}px`;
+  projectile.style.top = `${projY}px`;
+
+  moveProjectile();
+}
+
+
 function launchJunk() {
     const spaceJunk = document.querySelector('.spaceJunk');
     spaceJunk.classList.remove('hidden');
 
-    const randomTop = Math.floor(Math.random() * 150) + 150; // 150–250px from the top
+    const randomTop = Math.floor(Math.random() * 150) + 450; // 450–600px
     spaceJunk.style.top = `${randomTop}px`;
 
     let spaceJunkX = window.innerWidth + 100;
@@ -179,6 +245,7 @@ function resetGame() {
     score = 0; //reset score
     startTime = Date.now(); //reset time
     document.getElementById("score-counter").innerText = score; //update score display
+    document.querySelectorAll(".projectile").forEach(p => p.remove()); //remove all projectiles
 }
 
 //Game loop
@@ -189,10 +256,17 @@ function gameLoop() {
     
 
     if (checkCollision(joey, obstacle) || checkCollision(joey, spaceship) || checkCollision(joey, spaceJunk)) {
-        console.log("💥 COLLISION DETECTED!");
         endGame();
         return;
     }
+
+    document.querySelectorAll(".projectile").forEach(p => {
+        if (checkCollision(joey, p)) {
+          console.log("💥 PROJECTILE HIT!");
+          endGame();
+          return;
+        }
+      });
 
     gameLoopId = requestAnimationFrame(gameLoop); //request the next frame
 }

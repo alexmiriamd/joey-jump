@@ -11,13 +11,18 @@
     color: #5E66D5;
     /* overflow: hidden; */
   }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+  
   
   /* Game Container */
   .game-container {
     position: relative;
     width: 100%;
     height: 100vh;
-    /* overflow: hidden; */
+    overflow: hidden;
     /* Background- space, slow scroll using animation or JS parallax */
   }
   
@@ -28,8 +33,8 @@
     background-color: pink; /* Placeholder for Joey */
     border-radius: 50%;
     position: absolute;
-    bottom: 50px;
-    left: 50px;
+    bottom: 500px;
+    left: 10%;
   }
 
 /* .jump{
@@ -66,18 +71,29 @@
     height: 60px;
     background-color: red;
     position: absolute;
-    bottom: 50px;
+    bottom: 510px;
     right: 0;
   }
 /* Obstacle -- spaceship */
   .spaceship {
-    width: 60px;
-    height: 30px;
+    width: 90px;
+    height: 60px;
     background-color: #ccc; /* or use a cute sprite later */
     position: absolute;
     top: 120px; /* starting mid-air */
     right: -100px; /* off-screen */
     }
+
+/* Obstacle -- Projectile */
+  .projectile {
+    width: 10px;
+    height: 10px;
+    background: red;
+    border-radius: 50%;
+    box-shadow: 0 0 6px 2px #fff;
+    position: absolute;
+  }
+
 /* Obstacle -- space Junk */
   .spaceJunk {
     width: 50px;
@@ -88,14 +104,39 @@
     right: -100px; /* off-screen */
   }
 
-  /* Ground */
+  /* planet */
+  .planet-ring {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200px; /* or however tall your ring is */
+    background-color:#E0417B;
+    background-size: contain;
+    transform: rotate(-50deg); /* angled ring! */
+    z-index: 2;
+    pointer-events: none;
+    /* animation: ringSpin 20s linear infinite; optional! */
+  }
+  
+  /* @keyframes ringSpin {
+    from {
+      transform: rotate(-5deg);
+    }
+    to {
+      transform: rotate(355deg); 
+    }
+  } */
+
   .ground {
     width: 100%;
-    height: 55px;
+    height: 500px;
     background-color: #E7DCC8;
     position: absolute;
     bottom: 0;
-    border-radius: 50% 50% 0 0;
+    /* border-top-left-radius: 50% 100%;
+    border-top-right-radius: 50% 100%;
+    z-index: 1; */
   }
   
   /* Score Counter */
